@@ -119,6 +119,27 @@ jobs:
           KERNEL_VERSION_NAME: 6.6.y
           WHOAMI: ZqinKing
 
+      - name: Collect and Package All IPKs
+        run: |
+          # 创建临时搜集目录
+          mkdir -p ./firmware/packages
+          
+          # 搜集所有编译生成的 .ipk 文件 (find 命令会递归搜集所有子目录下的包)
+          # 包含内核驱动 kmod-*.ipk 和应用插件 *.ipk
+          find ./action_build/bin/targets/ -name "*.ipk" -exec cp -f {} ./firmware/packages/ \;
+          
+          # 移除不必要的包索引文件
+          rm -f ./firmware/packages/Packages*
+          
+          # 将所有包打包成一个压缩包，方便在 Release 页面展示
+          cd ./firmware
+          #tar -zcvf All_Packages_${{ inputs.model }}.tar.gz packages
+          tar -zcvf All_Packages_${{ inputs.model }}_${{ env.BUILD_DATE }}.tar.gz packages
+          
+          # 删除临时文件夹，只保留固件和生成的压缩包
+          rm -rf packages
+          echo "Packages collection completed."
+          
       - name: Prepare Release Body
         run: |
           echo "云编译发布" > release_body.txt
