@@ -37,9 +37,10 @@ jobs:
         os: [ubuntu-24.04]
     runs-on: ${{ matrix.os }}
     # --- 增加权限声明 ---
-    permissions:
-      contents: write
-      packages: write
+    #permissions:
+      #contents: write
+      #packages: write
+      #actions: write
 
     steps:
       - name: Free disk space
